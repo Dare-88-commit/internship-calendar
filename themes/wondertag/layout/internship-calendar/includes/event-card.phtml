@@ -19,6 +19,6 @@ $isToday = ($event['event_date'] ?? '') === $today;
             <span class="pill success">Today</span>
         <?php endif; ?>
         <a class="ghost-btn" href="index.php?link1=internship-calendar-event&eid=<?= (int) ($event['id'] ?? 0) ?>">Open</a>
-        <a class="ghost-btn" href="edit-event.php?id=<?= (int) ($event['id'] ?? 0) ?>">Edit</a>
+        <a class="ghost-btn" href="index.php?link1=internship-calendar-edit&eid=<?= (int) ($event['id'] ?? 0) ?>">Edit</a>
     </div>
 </article>

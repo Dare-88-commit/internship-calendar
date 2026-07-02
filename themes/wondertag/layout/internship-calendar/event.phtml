@@ -23,8 +23,8 @@ $event = $calendar['event'] ?? null;
                 <p class="section-subtitle"><?= Wo_Secure(app_format_date($event['event_date'])) ?></p>
             </div>
             <div class="toolbar">
-                <a class="ghost-btn" href="edit-event.php?id=<?= (int) $event['id'] ?>">Edit</a>
-                <button class="danger-btn" type="button" data-intern-delete="<?= (int) $event['id'] ?>">Delete</button>
+                <a class="ghost-btn" href="index.php?link1=internship-calendar-edit&eid=<?= (int) $event['id'] ?>">Edit</a>
+                <a class="danger-btn" href="index.php?link1=internship-calendar-delete&eid=<?= (int) $event['id'] ?>">Delete</a>
             </div>
         </div>
 

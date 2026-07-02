@@ -16,6 +16,13 @@ $currentWeek = (int) ($calendar['current_week'] ?? 0);
 <?= Wo_LoadPage('internship-calendar/includes/filters', ['weeks' => $weekCards, 'search' => $calendar['search'] ?? '', 'week' => $calendar['week'] ?? 0]) ?>
 
 <section class="section">
+    <div class="toolbar">
+        <a class="btn" href="index.php?link1=internship-calendar-add">Add Event</a>
+        <a class="ghost-btn" href="index.php?link1=internship-calendar-dashboard">Open Dashboard</a>
+    </div>
+</section>
+
+<section class="section">
     <div class="section-header">
         <div>
             <h2 class="section-title">Internship Events</h2>
@@ -54,4 +61,3 @@ $currentWeek = (int) ($calendar['current_week'] ?? 0);
 </section>
 
 <?= Wo_LoadPage('internship-calendar/includes/event-modal', ['event' => $allEvents[0] ?? null]) ?>
-

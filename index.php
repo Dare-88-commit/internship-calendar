@@ -19,6 +19,18 @@ switch ($link1) {
         require __DIR__ . '/sources/internship_calendar_event.php';
         break;
 
+    case 'internship-calendar-add':
+        require __DIR__ . '/sources/internship_calendar_add_event.php';
+        break;
+
+    case 'internship-calendar-edit':
+        require __DIR__ . '/sources/internship_calendar_edit_event.php';
+        break;
+
+    case 'internship-calendar-delete':
+        require __DIR__ . '/sources/internship_calendar_delete_event.php';
+        break;
+
     case 'internship-calendar':
     default:
         require __DIR__ . '/sources/internship_calendar.php';
@@ -26,4 +38,3 @@ switch ($link1) {
 }
 
 echo Wo_LoadPage('container', ['wo' => $wo]);
-

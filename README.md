@@ -40,7 +40,10 @@ internship-calendar/
 ├── sources/
 │   ├── internship_calendar.php
 │   ├── internship_calendar_dashboard.php
-│   └── internship_calendar_event.php
+│   ├── internship_calendar_event.php
+│   ├── internship_calendar_add_event.php
+│   ├── internship_calendar_edit_event.php
+│   └── internship_calendar_delete_event.php
 │
 ├── config/
 │   └── database.php
@@ -145,9 +148,25 @@ Prepares the dashboard data and loads the `dashboard.phtml` view.
 
 Loads a single event by ID and renders the `event.phtml` view.
 
+### `sources/internship_calendar_add_event.php`
+
+Loads the add-event form and handles the save action.
+
+### `sources/internship_calendar_edit_event.php`
+
+Loads the edit-event form and handles update submissions.
+
+### `sources/internship_calendar_delete_event.php`
+
+Loads the delete confirmation screen and handles deletion.
+
 ### `requests.php`
 
 Routes AJAX calls into `xhr/internship_calendar.php`.
+
+### Legacy root files
+
+The old root-level pages now redirect to the canonical triBBBal-style routes. They remain only for backward compatibility and are no longer the primary entry points.
 
 ## PHP Functions Used
 
@@ -194,7 +213,7 @@ The app now uses the `Africa/Lagos` timezone explicitly and validates dates in s
 3. Browse the schedule from the Wondertag-style calendar view.
 4. Use the shared search and week filters to update the event cards without a full reload.
 5. Open a single event through `/internship-calendar/event/{id}` or the dashboard route.
-6. Use the existing CRUD pages for add, edit, and delete actions while the team continues the triBBBal integration.
+6. Use the canonical add, edit, and delete routes under `index.php?link1=internship-calendar-add`, `index.php?link1=internship-calendar-edit`, and `index.php?link1=internship-calendar-delete`.
 7. Review totals and progress on `/internship-calendar/dashboard`.
 
 ## Setup Instructions
