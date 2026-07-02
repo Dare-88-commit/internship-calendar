@@ -50,6 +50,10 @@ $navItems = [
             <span></span><span></span><span></span>
         </button>
 
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme" title="Toggle light/dark theme">
+            <span class="theme-icon">🌙</span>
+        </button>
+
         <nav class="site-nav" data-nav>
             <?php foreach ($navItems as $item): ?>
                 <a class="<?= $currentPage === $item['href'] ? 'active' : '' ?>" href="<?= $item['href'] ?>">

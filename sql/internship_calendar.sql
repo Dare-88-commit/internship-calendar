@@ -11,6 +11,7 @@ CREATE TABLE calendar_events (
     success_criteria TEXT NOT NULL,
     traps TEXT DEFAULT NULL,
     event_date DATE NOT NULL,
+    is_completed TINYINT(1) NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -15,6 +15,15 @@ function internship_calendar_json(array $payload, int $code = 200): void
 
 function internship_calendar_render_events(array $events): string
 {
+    if (!$events) {
+        return Wo_LoadPage('internship-calendar/includes/empty-state', [
+            'title' => 'No events found',
+            'message' => 'Try another keyword or week filter.',
+            'buttonText' => 'Reset filters',
+            'buttonHref' => 'index.php?link1=internship-calendar',
+        ]);
+    }
+
     $html = '';
     $currentWeek = app_current_week($events);
     foreach ($events as $event) {
@@ -93,6 +102,17 @@ switch ($s) {
             'status' => $deleted ? 200 : 400,
             'message' => $deleted ? 'Event deleted successfully' : 'Unable to delete event',
         ], $deleted ? 200 : 400);
+        break;
+
+    case 'toggle_completion':
+        $id = (int) ($_POST['id'] ?? $_GET['id'] ?? 0);
+        $completed = isset($_POST['completed']) ? (int) $_POST['completed'] : 0;
+        $updated = $id > 0 ? app_update_event_completion($id, $completed) : false;
+
+        internship_calendar_json([
+            'status' => $updated ? 200 : 400,
+            'message' => $updated ? 'Event status updated' : 'Unable to update event',
+        ], $updated ? 200 : 400);
         break;
 
     default:

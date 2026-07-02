@@ -17,11 +17,66 @@
         }
     }
 
+    function refreshStats() {
+        return $.getJSON(endpoint, ajaxParams({ s: 'event_stats' }))
+            .done(function (response) {
+                if (response && typeof response.html === 'string') {
+                    $('.js-intern-calendar-stats').html(response.html);
+                }
+            });
+    }
+
+    function updateCompletion(id, completed) {
+        return $.post(endpoint, ajaxParams({ s: 'toggle_completion', id: id, completed: completed }));
+    }
+
     let debounceTimer = null;
     const $search = $('[data-intern-search]');
     const $week = $('[data-intern-week]');
     const $reset = $('[data-intern-reset]');
+    const $themeToggle = $('[data-theme-toggle]');
+    const $themeIcon = $('.theme-icon');
     const endpoint = window.APP_CONTEXT && window.APP_CONTEXT.ajax ? window.APP_CONTEXT.ajax : 'requests.php';
+    const html = document.documentElement;
+
+    function applyTheme(theme) {
+        if (theme === 'light') {
+            html.setAttribute('data-theme', 'light');
+            localStorage.setItem('theme', 'light');
+            if ($themeIcon.length) {
+                $themeIcon.text('☀️');
+            }
+        } else {
+            html.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'dark');
+            if ($themeIcon.length) {
+                $themeIcon.text('🌙');
+            }
+        }
+    }
+
+    function initializeTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        let theme = 'dark';
+
+        if (savedTheme) {
+            theme = savedTheme;
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+            theme = 'light';
+        }
+
+        applyTheme(theme);
+    }
+
+    if ($themeToggle.length) {
+        $themeToggle.on('click', function () {
+            const currentTheme = html.getAttribute('data-theme');
+            const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
+            applyTheme(nextTheme);
+        });
+    }
+
+    initializeTheme();
 
     function fetchEvents(params) {
         return $.getJSON(endpoint, ajaxParams(params)).done(renderResults);
@@ -75,8 +130,28 @@
                     keyword: $search.val(),
                     week: $week.val()
                 });
+                refreshStats();
             });
         event.preventDefault();
+    });
+
+    $(document).on('click', '[data-intern-complete]', function (event) {
+        const $button = $(this);
+        const id = $button.data('internId');
+        const completed = $button.data('completed') === 1 ? 0 : 1;
+
+        updateCompletion(id, completed).done(function () {
+            if ($('.js-intern-calendar-results').length) {
+                fetchEvents({
+                    s: 'search_events',
+                    keyword: $search.val(),
+                    week: $week.val(),
+                });
+                refreshStats();
+            } else {
+                window.location.reload();
+            }
+        });
     });
 
     document.querySelectorAll('[data-event-date]').forEach(function (el) {

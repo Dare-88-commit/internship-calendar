@@ -178,6 +178,7 @@ function app_normalize_event(array $data): array
         'success_criteria' => trim((string) ($data['success_criteria'] ?? '')),
         'traps' => trim((string) ($data['traps'] ?? '')),
         'event_date' => trim((string) ($data['event_date'] ?? '')),
+        'is_completed' => isset($data['is_completed']) ? 1 : 0,
     ];
 }
 
@@ -323,16 +324,10 @@ function app_dashboard_stats(array $events): array
     $upcoming = 0;
 
     foreach ($events as $event) {
-        $dateTime = DateTimeImmutable::createFromFormat('!Y-m-d', (string) $event['event_date'], app_timezone());
-        $timestamp = $dateTime ? $dateTime->getTimestamp() : false;
-        if ($timestamp === false) {
-            continue;
-        }
+        $completedEvent = isset($event['is_completed']) && (int) $event['is_completed'] === 1;
 
-        if ($timestamp < $today) {
+        if ($completedEvent) {
             $completed++;
-        } else {
-            $upcoming++;
         }
     }
 
@@ -342,7 +337,7 @@ function app_dashboard_stats(array $events): array
         'total_events' => $totalEvents,
         'current_week' => app_current_week($events),
         'completed_events' => $completed,
-        'upcoming_events' => $upcoming,
+        'upcoming_events' => $totalEvents - $completed,
         'progress_percent' => $totalEvents > 0 ? (int) round(($completed / $totalEvents) * 100) : 0,
     ];
 }
@@ -385,7 +380,7 @@ function app_save_event(array $data, ?int $id = null): array
     if ($id !== null) {
         $stmt = mysqli_prepare(
             $conn,
-            'UPDATE calendar_events SET week = ?, day = ?, title = ?, description = ?, success_criteria = ?, traps = ?, event_date = ? WHERE id = ?'
+            'UPDATE calendar_events SET week = ?, day = ?, title = ?, description = ?, success_criteria = ?, traps = ?, event_date = ?, is_completed = ? WHERE id = ?'
         );
 
         if (!$stmt) {
@@ -398,7 +393,7 @@ function app_save_event(array $data, ?int $id = null): array
 
         mysqli_stmt_bind_param(
             $stmt,
-            'issssssi',
+            'isssssiis',
             $payload['week'],
             $payload['day'],
             $payload['title'],
@@ -406,6 +401,7 @@ function app_save_event(array $data, ?int $id = null): array
             $payload['success_criteria'],
             $payload['traps'],
             $payload['event_date'],
+            $payload['is_completed'],
             $id
         );
     } else {
@@ -464,6 +460,22 @@ function app_delete_event(int $id): bool
     }
 
     mysqli_stmt_bind_param($stmt, 'i', $id);
+    $executed = mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+
+    return $executed;
+}
+
+function app_update_event_completion(int $id, int $isCompleted): bool
+{
+    $conn = app_db();
+    $stmt = mysqli_prepare($conn, 'UPDATE calendar_events SET is_completed = ? WHERE id = ?');
+
+    if (!$stmt) {
+        return false;
+    }
+
+    mysqli_stmt_bind_param($stmt, 'ii', $isCompleted, $id);
     $executed = mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
 
