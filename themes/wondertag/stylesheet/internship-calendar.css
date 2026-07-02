@@ -1,0 +1,65 @@
+.intern-calendar-shell .section {
+    margin-top: 24px;
+}
+
+.intern-calendar-header {
+    margin-bottom: 18px;
+}
+
+.intern-calendar-nav a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.intern-calendar-filters .form-grid {
+    align-items: end;
+}
+
+.intern-calendar-stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.intern-calendar-card,
+.intern-calendar-row {
+    min-height: 100%;
+}
+
+.intern-calendar-empty {
+    text-align: center;
+}
+
+.intern-calendar-modal[hidden] {
+    display: none;
+}
+
+.intern-calendar-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+}
+
+.intern-calendar-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.intern-calendar-modal__dialog {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 8vh auto 0;
+    background: var(--panel-strong);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+}
+
+@media (max-width: 960px) {
+    .intern-calendar-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+

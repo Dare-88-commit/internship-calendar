@@ -1,0 +1,55 @@
+<?php
+
+declare(strict_types=1);
+
+$pageTitle = $wo['page_title'] ?? 'Tribbbal Internship Calendar';
+$pageDescription = $wo['description'] ?? 'Tribbbal internship calendar feature';
+$themeData = $wo['internship_calendar'] ?? [];
+$currentPage = $wo['page'] ?? 'internship-calendar';
+?>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><?= Wo_Secure($pageTitle) ?></title>
+    <meta name="description" content="<?= Wo_Secure($pageDescription) ?>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="themes/wondertag/stylesheet/internship-calendar.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        window.APP_CONTEXT = <?= json_encode([
+            'page' => $currentPage,
+            'ajax' => Wo_Ajax_Requests_File(),
+            'today' => app_today_date(),
+            'currentWeek' => $themeData['current_week'] ?? 0,
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
+    </script>
+    <script defer src="themes/wondertag/javascript/internship-calendar.js"></script>
+</head>
+<body class="wondertag-theme">
+    <div class="page-shell intern-calendar-shell">
+        <header class="site-header intern-calendar-header">
+            <a class="brand" href="index.php?link1=internship-calendar">
+                <span class="brand-mark">TC</span>
+                <span>
+                    <strong>Tribbbal</strong>
+                    <small>Internship Calendar</small>
+                </span>
+            </a>
+            <nav class="site-nav intern-calendar-nav">
+                <a class="<?= $currentPage === 'internship-calendar' ? 'active' : '' ?>" href="index.php?link1=internship-calendar">Calendar</a>
+                <a class="<?= $currentPage === 'internship-calendar-dashboard' ? 'active' : '' ?>" href="index.php?link1=internship-calendar-dashboard">Dashboard</a>
+                <a href="add-event.php">Add Event</a>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <?= $wo['content'] ?? '' ?>
+        </main>
+    </div>
+</body>
+</html>

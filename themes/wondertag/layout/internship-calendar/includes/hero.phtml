@@ -1,0 +1,44 @@
+<?php
+
+declare(strict_types=1);
+
+$title = $title ?? 'Tribbbal Internship Calendar';
+$subtitle = $subtitle ?? 'A Wondertag-aligned internship feature built with shared partials.';
+$primaryHref = $primaryHref ?? 'index.php?link1=internship-calendar-dashboard';
+$secondaryHref = $secondaryHref ?? 'add-event.php';
+$secondaryText = $secondaryText ?? 'Add event';
+$stats = $stats ?? [];
+?>
+
+<section class="hero intern-calendar-hero">
+    <div class="hero-panel intern-calendar-hero-panel">
+        <span class="eyebrow">Internship feature module</span>
+        <h1><?= Wo_Secure($title) ?></h1>
+        <p><?= Wo_Secure($subtitle) ?></p>
+        <div class="hero-actions">
+            <a class="btn" href="<?= Wo_Secure($primaryHref) ?>">Open dashboard</a>
+            <a class="ghost-btn" href="<?= Wo_Secure($secondaryHref) ?>"><?= Wo_Secure($secondaryText) ?></a>
+        </div>
+    </div>
+    <div class="hero-aside">
+        <div class="metric-grid">
+            <article class="metric">
+                <span class="metric-label">Weeks</span>
+                <p class="metric-value"><?= (int) ($stats['total_weeks'] ?? 0) ?></p>
+            </article>
+            <article class="metric">
+                <span class="metric-label">Events</span>
+                <p class="metric-value"><?= (int) ($stats['total_events'] ?? 0) ?></p>
+            </article>
+            <article class="metric">
+                <span class="metric-label">Current Week</span>
+                <p class="metric-value"><?= (int) ($stats['current_week'] ?? 0) ?></p>
+            </article>
+            <article class="metric">
+                <span class="metric-label">Progress</span>
+                <p class="metric-value"><?= (int) ($stats['progress_percent'] ?? 0) ?>%</p>
+            </article>
+        </div>
+    </div>
+</section>
+

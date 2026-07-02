@@ -1,0 +1,50 @@
+<?php
+
+declare(strict_types=1);
+
+$wo = $wo ?? [];
+$calendar = $wo['internship_calendar'] ?? [];
+$stats = $calendar['stats'] ?? [];
+$latestEvents = $calendar['latest_events'] ?? [];
+$currentWeek = (int) ($calendar['current_week'] ?? 0);
+?>
+
+<?= Wo_LoadPage('internship-calendar/includes/hero', [
+    'title' => 'Dashboard',
+    'subtitle' => 'Operational overview for the internship calendar.',
+    'primaryHref' => 'index.php?link1=internship-calendar',
+    'secondaryHref' => 'index.php?link1=internship-calendar',
+    'secondaryText' => 'Back to calendar',
+]) ?>
+
+<?= Wo_LoadPage('internship-calendar/includes/stats-strip', ['stats' => $stats]) ?>
+
+<section class="section">
+    <div class="section-header">
+        <div>
+            <h2 class="section-title">Progress Overview</h2>
+            <p class="section-subtitle">This reflects completed versus upcoming internship days.</p>
+        </div>
+    </div>
+    <div class="panel progress-card">
+        <div class="progress-track" aria-hidden="true">
+            <div class="progress-fill" style="width: <?= (int) ($stats['progress_percent'] ?? 0) ?>%;"></div>
+        </div>
+        <p class="helper-copy"><?= (int) ($stats['completed_events'] ?? 0) ?> completed and <?= (int) ($stats['upcoming_events'] ?? 0) ?> upcoming.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-header">
+        <div>
+            <h2 class="section-title">Recent Events</h2>
+            <p class="section-subtitle">A compact event summary using shared row partials.</p>
+        </div>
+    </div>
+    <div class="grid calendar-grid">
+        <?php foreach ($latestEvents as $event): ?>
+            <?= Wo_LoadPage('internship-calendar/includes/event-row', ['event' => $event, 'currentWeek' => $currentWeek]) ?>
+        <?php endforeach; ?>
+    </div>
+</section>
+

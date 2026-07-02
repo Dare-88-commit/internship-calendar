@@ -1,0 +1,33 @@
+<?php
+
+declare(strict_types=1);
+
+$weeks = $weeks ?? [];
+$search = $search ?? '';
+$week = (int) ($week ?? 0);
+?>
+
+<section class="section">
+    <div class="panel intern-calendar-filters">
+        <div class="form-grid">
+            <div class="field full">
+                <label for="intern-calendar-search">Search titles</label>
+                <input id="intern-calendar-search" type="search" data-intern-search value="<?= Wo_Secure($search) ?>" placeholder="Type a title keyword...">
+            </div>
+            <div class="field">
+                <label for="intern-calendar-week">Week filter</label>
+                <select id="intern-calendar-week" data-intern-week>
+                    <option value="0">All weeks</option>
+                    <?php foreach ($weeks as $summary): ?>
+                        <option value="<?= (int) $summary['week'] ?>" <?= $week === (int) $summary['week'] ? 'selected' : '' ?>>Week <?= (int) $summary['week'] ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="field">
+                <label>&nbsp;</label>
+                <button class="btn" type="button" data-intern-reset>Reset filters</button>
+            </div>
+        </div>
+    </div>
+</section>
+

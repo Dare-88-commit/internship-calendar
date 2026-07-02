@@ -1,0 +1,13 @@
+RewriteEngine On
+
+# Route feature URLs into the front controller
+RewriteRule ^internship-calendar/?$ index.php?link1=internship-calendar [NC,QSA,L]
+RewriteRule ^internship-calendar/dashboard/?$ index.php?link1=internship-calendar-dashboard [NC,QSA,L]
+RewriteRule ^internship-calendar/event/([0-9]+)/?$ index.php?link1=internship-calendar-event&eid=$1 [NC,QSA,L]
+
+# Keep AJAX requests explicit
+RewriteRule ^requests\.php$ requests.php [L]
+
+# Direct PHP handling
+AddHandler application/x-httpd-php .php .phtml
+

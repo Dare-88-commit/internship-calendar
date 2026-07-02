@@ -1,0 +1,57 @@
+<?php
+
+declare(strict_types=1);
+
+$wo = $wo ?? [];
+$calendar = $wo['internship_calendar'] ?? [];
+$events = $calendar['events'] ?? [];
+$allEvents = $calendar['all_events'] ?? [];
+$stats = $calendar['stats'] ?? [];
+$weekCards = $calendar['week_cards'] ?? [];
+$currentWeek = (int) ($calendar['current_week'] ?? 0);
+?>
+
+<?= Wo_LoadPage('internship-calendar/includes/hero', ['stats' => $stats, 'currentWeek' => $currentWeek]) ?>
+<?= Wo_LoadPage('internship-calendar/includes/stats-strip', ['stats' => $stats]) ?>
+<?= Wo_LoadPage('internship-calendar/includes/filters', ['weeks' => $weekCards, 'search' => $calendar['search'] ?? '', 'week' => $calendar['week'] ?? 0]) ?>
+
+<section class="section">
+    <div class="section-header">
+        <div>
+            <h2 class="section-title">Internship Events</h2>
+            <p class="section-subtitle">Use search or week filtering to update the same shared event cards.</p>
+        </div>
+    </div>
+
+    <div class="grid calendar-grid js-intern-calendar-results">
+        <?php if ($events): ?>
+            <?php foreach ($events as $event): ?>
+                <?= Wo_LoadPage('internship-calendar/includes/event-card', ['event' => $event, 'currentWeek' => $currentWeek]) ?>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <?= Wo_LoadPage('internship-calendar/includes/empty-state', [
+                'title' => 'No events found',
+                'message' => 'Try another keyword or week filter.',
+                'buttonText' => 'Reset filters',
+                'buttonHref' => 'index.php?link1=internship-calendar',
+            ]) ?>
+        <?php endif; ?>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-header">
+        <div>
+            <h2 class="section-title">Latest Entries</h2>
+            <p class="section-subtitle">A compact summary of the most recent schedule rows.</p>
+        </div>
+    </div>
+    <div class="grid calendar-grid">
+        <?php foreach (array_slice($allEvents, 0, 6) as $event): ?>
+            <?= Wo_LoadPage('internship-calendar/includes/event-row', ['event' => $event, 'currentWeek' => $currentWeek]) ?>
+        <?php endforeach; ?>
+    </div>
+</section>
+
+<?= Wo_LoadPage('internship-calendar/includes/event-modal', ['event' => $allEvents[0] ?? null]) ?>
+

@@ -1,0 +1,55 @@
+<?php
+
+declare(strict_types=1);
+
+$wo = $wo ?? [];
+$calendar = $wo['internship_calendar'] ?? [];
+$event = $calendar['event'] ?? null;
+?>
+
+<section class="section">
+    <?php if (!$event): ?>
+        <?= Wo_LoadPage('internship-calendar/includes/empty-state', [
+            'title' => 'No event found',
+            'message' => 'Go back to the calendar and select a valid event.',
+            'buttonText' => 'Back to calendar',
+            'buttonHref' => 'index.php?link1=internship-calendar',
+        ]) ?>
+    <?php else: ?>
+        <div class="section-header">
+            <div>
+                <span class="pill accent">Week <?= (int) $event['week'] ?> • <?= Wo_Secure($event['day']) ?></span>
+                <h1 class="section-title"><?= Wo_Secure($event['title']) ?></h1>
+                <p class="section-subtitle"><?= Wo_Secure(app_format_date($event['event_date'])) ?></p>
+            </div>
+            <div class="toolbar">
+                <a class="ghost-btn" href="edit-event.php?id=<?= (int) $event['id'] ?>">Edit</a>
+                <button class="danger-btn" type="button" data-intern-delete="<?= (int) $event['id'] ?>">Delete</button>
+            </div>
+        </div>
+
+        <div class="panel event-detail">
+            <?= Wo_LoadPage('internship-calendar/includes/event-row', ['event' => $event, 'detailed' => true]) ?>
+            <div class="event-section">
+                <h2 class="card-title">Description</h2>
+                <p><?= nl2br(Wo_Secure($event['description'])) ?></p>
+            </div>
+            <div class="event-section">
+                <h2 class="card-title">Success Criteria</h2>
+                <ul class="detail-list">
+                    <?php foreach (app_text_lines($event['success_criteria']) as $line): ?>
+                        <li><?= Wo_Secure($line) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+            <div class="event-section">
+                <h2 class="card-title">Traps / Watch Outs</h2>
+                <ul class="detail-list">
+                    <?php foreach (app_text_lines($event['traps']) as $line): ?>
+                        <li><?= Wo_Secure($line) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+    <?php endif; ?>
+</section>

@@ -2,17 +2,19 @@
 
 A PHP and MySQL web application for replacing the internship schedule spreadsheet with a clean, searchable, and easy-to-manage calendar system.
 
-This workspace now includes the full application structure, reusable PHP helpers, a responsive front end, and an SQL export with seeded internship-day records for immediate import.
+This workspace now includes a triBBBal-style route/controller layer, reusable PHP helpers, `.phtml` templates, an `xhr` endpoint, and an SQL export with seeded internship-day records for immediate import.
 
 ## Project Summary
 
 This project stores internship schedule data in MySQL and presents it in a modern calendar/timeline interface. An administrator can add, edit, delete, search, and view internship events by week and day.
 
-The goal is to turn the Excel-based schedule into a production-style PHP application with:
+The goal is to turn the Excel-based schedule into a production-style PHP feature that matches the triBBBal collaboration pattern:
 
 - A structured database
-- Reusable PHP includes
-- A responsive UI
+- Route/controller based rendering
+- Reusable `.phtml` includes and partials
+- An `xhr` endpoint for interactive updates
+- A responsive Wondertag-aligned UI
 - CRUD functionality
 - A documented set of PHP built-in functions used in the project
 
@@ -34,13 +36,11 @@ The goal is to turn the Excel-based schedule into a production-style PHP applica
 internship-calendar/
 │
 ├── index.php
-├── calendar.php
-├── add-event.php
-├── edit-event.php
-├── delete-event.php
-├── event.php
-├── search.php
-├── dashboard.php
+├── requests.php
+├── sources/
+│   ├── internship_calendar.php
+│   ├── internship_calendar_dashboard.php
+│   └── internship_calendar_event.php
 │
 ├── config/
 │   └── database.php
@@ -57,11 +57,47 @@ internship-calendar/
 │   │   └── script.js
 │   └── images/
 │
+├── xhr/
+│   └── internship_calendar.php
+│
+├── themes/
+│   └── wondertag/
+│       ├── layout/
+│       │   ├── container.phtml
+│       │   └── internship-calendar/
+│       │       ├── content.phtml
+│       │       ├── dashboard.phtml
+│       │       ├── event.phtml
+│       │       └── includes/
+│       │           ├── hero.phtml
+│       │           ├── filters.phtml
+│       │           ├── stats-strip.phtml
+│       │           ├── event-card.phtml
+│       │           ├── event-row.phtml
+│       │           ├── empty-state.phtml
+│       │           └── event-modal.phtml
+│       ├── javascript/
+│       │   └── internship-calendar.js
+│       └── stylesheet/
+│           └── internship-calendar.css
+│
 ├── sql/
 │   └── internship_calendar.sql
 │
 └── README.md
 ```
+
+## Render Flow
+
+The new feature follows the collaboration brief flow:
+
+`route/controller -> source data preparation -> Wo_LoadPage() -> .phtml template -> shared includes/partials -> jQuery/AJAX -> requests.php -> xhr handler -> JSON/HTML response`
+
+Primary routes:
+
+- `/internship-calendar`
+- `/internship-calendar/dashboard`
+- `/internship-calendar/event/{id}`
 
 ## Database Design
 
@@ -95,35 +131,23 @@ calendar_events
 
 ### `index.php`
 
-The landing page. Displays all 8 weeks in modern cards and gives a quick overview of the internship calendar.
+Front controller. Reads `link1`, loads the correct `sources/*.php` controller, and renders the shared container.
 
-### `calendar.php`
+### `sources/internship_calendar.php`
 
-Shows the events in a premium calendar or timeline layout for easier browsing.
+Prepares the calendar home data and loads the `content.phtml` view.
 
-### `event.php`
+### `sources/internship_calendar_dashboard.php`
 
-Displays a single event in detail, including title, description, success criteria, traps, and date.
+Prepares the dashboard data and loads the `dashboard.phtml` view.
 
-### `add-event.php`
+### `sources/internship_calendar_event.php`
 
-Provides a form for inserting a new event into MySQL.
+Loads a single event by ID and renders the `event.phtml` view.
 
-### `edit-event.php`
+### `requests.php`
 
-Loads an existing event and allows the administrator to update it.
-
-### `delete-event.php`
-
-Deletes an event after confirmation.
-
-### `search.php`
-
-Searches calendar events by title.
-
-### `dashboard.php`
-
-Displays summary statistics such as total weeks, total days, total events, current week, completed events, and upcoming events.
+Routes AJAX calls into `xhr/internship_calendar.php`.
 
 ## PHP Functions Used
 
@@ -159,16 +183,19 @@ These 15 functions cover the full flow of the project:
 - `header()` supports clean redirects after CRUD actions.
 - `json_encode()` is useful if any part of the interface uses AJAX or dynamic scripts.
 
+## Date Handling
+
+The app now uses the `Africa/Lagos` timezone explicitly and validates dates in strict `Y-m-d` format so the current week, progress counts, and formatted dates stay consistent across machines. The schedule seed now starts Week 1 on `2026-06-29`, which keeps the internship calendar aligned with the corrected timeline.
+
 ## Sample Workflow
 
 1. Import the Excel data into `calendar_events`.
-2. Load the schedule on `index.php`.
-3. Open a week or day in `calendar.php`.
-4. Click an event to view full details in `event.php`.
-5. Use `add-event.php` or `edit-event.php` to manage records.
-6. Use `delete-event.php` to remove an event safely.
-7. Use `search.php` to find event titles quickly.
-8. Review totals and progress on `dashboard.php`.
+2. Open the feature through `/internship-calendar` or `index.php?link1=internship-calendar`.
+3. Browse the schedule from the Wondertag-style calendar view.
+4. Use the shared search and week filters to update the event cards without a full reload.
+5. Open a single event through `/internship-calendar/event/{id}` or the dashboard route.
+6. Use the existing CRUD pages for add, edit, and delete actions while the team continues the triBBBal integration.
+7. Review totals and progress on `/internship-calendar/dashboard`.
 
 ## Setup Instructions
 
