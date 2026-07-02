@@ -1,0 +1,17 @@
+<?php
+
+declare(strict_types=1);
+?>
+
+<div class="intern-calendar-modal js-intern-modal-root" hidden>
+    <div class="intern-calendar-modal__backdrop" data-intern-modal-close></div>
+    <div class="intern-calendar-modal__dialog">
+        <button type="button" class="ghost-btn intern-calendar-modal__close" data-intern-modal-close>Close</button>
+        <div class="js-intern-modal-body">
+            <?php if (!empty($event)): ?>
+                <h3><?= Wo_Secure((string) ($event['title'] ?? '')) ?></h3>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+

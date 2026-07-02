@@ -1,0 +1,24 @@
+<?php
+
+declare(strict_types=1);
+
+$event = $event ?? [];
+$currentWeek = (int) ($currentWeek ?? 0);
+$today = app_today_date();
+$isCurrentWeek = $currentWeek > 0 && (int) ($event['week'] ?? 0) === $currentWeek;
+$isToday = ($event['event_date'] ?? '') === $today;
+?>
+
+<article class="timeline-event intern-calendar-card <?= $isCurrentWeek ? 'current-week-card' : '' ?> <?= $isToday ? 'today-highlight' : '' ?>" data-event-date="<?= Wo_Secure((string) ($event['event_date'] ?? '')) ?>">
+    <span class="pill accent">Week <?= (int) ($event['week'] ?? 0) ?> • <?= Wo_Secure((string) ($event['day'] ?? '')) ?></span>
+    <h3 class="timeline-title"><?= Wo_Secure((string) ($event['title'] ?? '')) ?></h3>
+    <p class="timeline-desc"><?= Wo_Secure(app_text_preview((string) ($event['description'] ?? ''), 170)) ?></p>
+    <div class="timeline-meta">
+        <span class="pill"><?= Wo_Secure(app_format_date((string) ($event['event_date'] ?? ''))) ?></span>
+        <?php if ($isToday): ?>
+            <span class="pill success">Today</span>
+        <?php endif; ?>
+        <a class="ghost-btn" href="index.php?link1=internship-calendar-event&eid=<?= (int) ($event['id'] ?? 0) ?>">Open</a>
+        <a class="ghost-btn" href="index.php?link1=internship-calendar-edit&eid=<?= (int) ($event['id'] ?? 0) ?>">Edit</a>
+    </div>
+</article>

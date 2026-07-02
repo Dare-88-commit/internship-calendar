@@ -1,0 +1,28 @@
+<?php
+
+declare(strict_types=1);
+
+$stats = $stats ?? [];
+?>
+
+<section class="section">
+    <div class="grid intern-calendar-stats js-intern-calendar-stats">
+        <article class="metric">
+            <span class="metric-label">Total Weeks</span>
+            <p class="metric-value"><?= (int) ($stats['total_weeks'] ?? 0) ?></p>
+        </article>
+        <article class="metric">
+            <span class="metric-label">Total Days</span>
+            <p class="metric-value"><?= (int) ($stats['total_days'] ?? 0) ?></p>
+        </article>
+        <article class="metric">
+            <span class="metric-label">Completed</span>
+            <p class="metric-value"><?= (int) ($stats['completed_events'] ?? 0) ?></p>
+        </article>
+        <article class="metric">
+            <span class="metric-label">Upcoming</span>
+            <p class="metric-value"><?= (int) ($stats['upcoming_events'] ?? 0) ?></p>
+        </article>
+    </div>
+</section>
+

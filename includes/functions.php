@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-if (session_status() === PHP_SESSION_NONE) {
+if (PHP_SAPI !== 'cli' && session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+date_default_timezone_set('Africa/Lagos');
 
 require_once __DIR__ . '/../config/database.php';
 
@@ -98,15 +100,30 @@ function app_text_preview(?string $text, int $limit = 120): string
     return strlen($preview) > $limit ? substr($preview, 0, $limit - 1) . '…' : $preview;
 }
 
+function app_timezone(): DateTimeZone
+{
+    return new DateTimeZone('Africa/Lagos');
+}
+
+function app_today_timestamp(): int
+{
+    return (new DateTimeImmutable('now', app_timezone()))->setTime(0, 0)->getTimestamp();
+}
+
+function app_today_date(): string
+{
+    return (new DateTimeImmutable('now', app_timezone()))->format('Y-m-d');
+}
+
 function app_format_date(?string $date): string
 {
     if (!$date) {
         return '-';
     }
 
-    $timestamp = strtotime($date);
+    $dateTime = DateTimeImmutable::createFromFormat('!Y-m-d', $date, app_timezone());
 
-    return $timestamp ? date('F j, Y', $timestamp) : '-';
+    return $dateTime ? $dateTime->format('F j, Y') : '-';
 }
 
 function app_is_valid_date(?string $date): bool
@@ -115,9 +132,9 @@ function app_is_valid_date(?string $date): bool
         return false;
     }
 
-    $timestamp = strtotime($date);
+    $dateTime = DateTimeImmutable::createFromFormat('!Y-m-d', $date, app_timezone());
 
-    return $timestamp !== false;
+    return $dateTime !== false && $dateTime->format('Y-m-d') === $date;
 }
 
 function app_validate_event(array $data): array
@@ -251,12 +268,13 @@ function app_current_week(array $events): int
         return 0;
     }
 
-    $today = strtotime(date('Y-m-d'));
+    $today = app_today_timestamp();
     $ranges = [];
 
     foreach ($events as $event) {
         $week = (int) $event['week'];
-        $timestamp = strtotime((string) $event['event_date']);
+        $dateTime = DateTimeImmutable::createFromFormat('!Y-m-d', (string) $event['event_date'], app_timezone());
+        $timestamp = $dateTime ? $dateTime->getTimestamp() : false;
 
         if ($timestamp === false) {
             continue;
@@ -299,13 +317,14 @@ function app_current_week(array $events): int
 
 function app_dashboard_stats(array $events): array
 {
-    $today = strtotime(date('Y-m-d'));
+    $today = app_today_timestamp();
     $totalEvents = count($events);
     $completed = 0;
     $upcoming = 0;
 
     foreach ($events as $event) {
-        $timestamp = strtotime((string) $event['event_date']);
+        $dateTime = DateTimeImmutable::createFromFormat('!Y-m-d', (string) $event['event_date'], app_timezone());
+        $timestamp = $dateTime ? $dateTime->getTimestamp() : false;
         if ($timestamp === false) {
             continue;
         }
@@ -449,4 +468,71 @@ function app_delete_event(int $id): bool
     mysqli_stmt_close($stmt);
 
     return $executed;
+}
+
+function Wo_Secure(?string $value): string
+{
+    return app_escape($value);
+}
+
+function Wo_Ajax_Requests_File(): string
+{
+    return 'requests.php';
+}
+
+function Wo_LoadPage(string $page, array $data = []): string
+{
+    $page = trim(str_replace(['..', '\\'], '', $page), '/');
+    $view = __DIR__ . '/../themes/wondertag/layout/' . $page . '.phtml';
+
+    if (!is_file($view)) {
+        return '';
+    }
+
+    ob_start();
+    extract($data, EXTR_SKIP);
+    include $view;
+
+    return (string) ob_get_clean();
+}
+
+function Wo_GetInternshipCalendarEvents(string $search = '', ?int $week = null): array
+{
+    $events = app_fetch_events($search);
+
+    if ($week !== null && $week > 0) {
+        $events = array_values(array_filter($events, static fn(array $event): bool => (int) $event['week'] === $week));
+    }
+
+    return $events;
+}
+
+function Wo_GetInternshipCalendarGroupedEvents(array $events): array
+{
+    return app_event_weeks($events);
+}
+
+function Wo_GetInternshipCalendarWeekCards(array $events): array
+{
+    return app_week_card_summary($events);
+}
+
+function Wo_GetInternshipCalendarStats(array $events): array
+{
+    return app_dashboard_stats($events);
+}
+
+function Wo_GetInternshipCalendarEvent(int $id): ?array
+{
+    return app_fetch_event($id);
+}
+
+function Wo_SaveInternshipCalendarEvent(array $data, ?int $id = null): array
+{
+    return app_save_event($data, $id);
+}
+
+function Wo_DeleteInternshipCalendarEvent(int $id): bool
+{
+    return app_delete_event($id);
 }
