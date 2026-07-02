@@ -16,13 +16,20 @@ $event = $calendar['event'] ?? null;
             'buttonHref' => 'index.php?link1=internship-calendar',
         ]) ?>
     <?php else: ?>
+        <?php $isCompleted = isset($event['is_completed']) && (int) $event['is_completed'] === 1; ?>
         <div class="section-header">
             <div>
                 <span class="pill accent">Week <?= (int) $event['week'] ?> • <?= Wo_Secure($event['day']) ?></span>
+                <?php if ($isCompleted): ?>
+                    <span class="pill success">Done</span>
+                <?php endif; ?>
                 <h1 class="section-title"><?= Wo_Secure($event['title']) ?></h1>
                 <p class="section-subtitle"><?= Wo_Secure(app_format_date($event['event_date'])) ?></p>
             </div>
             <div class="toolbar">
+                <button class="ghost-btn" type="button" data-intern-complete data-intern-id="<?= (int) $event['id'] ?>" data-completed="<?= $isCompleted ? '1' : '0' ?>">
+                    <?= $isCompleted ? 'Mark not done' : 'Mark done' ?>
+                </button>
                 <a class="ghost-btn" href="index.php?link1=internship-calendar-edit&eid=<?= (int) $event['id'] ?>">Edit</a>
                 <a class="danger-btn" href="index.php?link1=internship-calendar-delete&eid=<?= (int) $event['id'] ?>">Delete</a>
             </div>

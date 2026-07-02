@@ -40,6 +40,9 @@ $currentPage = $wo['page'] ?? 'internship-calendar';
                     <small>Internship Calendar</small>
                 </span>
             </a>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme" title="Toggle light/dark theme">
+                <span class="theme-icon">🌙</span>
+            </button>
             <nav class="site-nav intern-calendar-nav">
                 <a class="<?= $currentPage === 'internship-calendar' ? 'active' : '' ?>" href="index.php?link1=internship-calendar">Calendar</a>
                 <a class="<?= $currentPage === 'internship-calendar-dashboard' ? 'active' : '' ?>" href="index.php?link1=internship-calendar-dashboard">Dashboard</a>

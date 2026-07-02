@@ -7,10 +7,14 @@ $currentWeek = (int) ($currentWeek ?? 0);
 $detailed = (bool) ($detailed ?? false);
 $today = app_today_date();
 $isToday = ($event['event_date'] ?? '') === $today;
+$isCompleted = isset($event['is_completed']) && (int) $event['is_completed'] === 1;
 ?>
 
-<article class="timeline-event intern-calendar-row <?= $currentWeek > 0 && (int) ($event['week'] ?? 0) === $currentWeek ? 'current-week-card' : '' ?> <?= $isToday ? 'today-highlight' : '' ?>" data-event-date="<?= Wo_Secure((string) ($event['event_date'] ?? '')) ?>">
+<article class="timeline-event intern-calendar-row <?= $currentWeek > 0 && (int) ($event['week'] ?? 0) === $currentWeek ? 'current-week-card' : '' ?> <?= $isToday ? 'today-highlight' : '' ?> <?= $isCompleted ? 'completed' : '' ?>" data-event-date="<?= Wo_Secure((string) ($event['event_date'] ?? '')) ?>">
     <span class="pill success">Week <?= (int) ($event['week'] ?? 0) ?></span>
+    <?php if ($isCompleted): ?>
+        <span class="pill success">Done</span>
+    <?php endif; ?>
     <h3 class="timeline-title"><?= Wo_Secure((string) ($event['title'] ?? '')) ?></h3>
     <p class="timeline-desc"><?= $detailed ? Wo_Secure((string) ($event['description'] ?? '')) : Wo_Secure(app_text_preview((string) ($event['description'] ?? ''), 120)) ?></p>
     <div class="timeline-meta">
@@ -18,6 +22,9 @@ $isToday = ($event['event_date'] ?? '') === $today;
         <?php if ($isToday): ?>
             <span class="pill success">Today</span>
         <?php endif; ?>
+        <button class="ghost-btn" type="button" data-intern-complete data-intern-id="<?= (int) ($event['id'] ?? 0) ?>" data-completed="<?= $isCompleted ? '1' : '0' ?>">
+            <?= $isCompleted ? 'Mark not done' : 'Mark done' ?>
+        </button>
         <a class="ghost-btn" href="index.php?link1=internship-calendar-event&eid=<?= (int) ($event['id'] ?? 0) ?>">Details</a>
         <a class="ghost-btn" href="index.php?link1=internship-calendar-edit&eid=<?= (int) ($event['id'] ?? 0) ?>">Edit</a>
     </div>
